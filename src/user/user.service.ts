@@ -7,15 +7,15 @@ export class UserService {
     constructor(private prisma : PrismaServices){}
 
     createUser(createuser : Prisma.UserCreateInput){
-            return this.prisma.user.create({data : createuser})
+            return this.prisma.user.create({data : {...createuser, usersetting : { create: {smsenabled : true, notifications : true}}}});
     }
 
     getUser(){
-        return this.prisma.user.findMany();
+        return this.prisma.user.findMany({include : {usersetting : {select : {smsenabled : true , notifications : true}}}});
     }
 
     getUserById(id : number){
-        return this.prisma.user.findUnique({where : {id}});
+        return this.prisma.user.findUnique({where : {id} , include : {usersetting : true}});
     }
 
     async deleteUser(id : number){
@@ -46,5 +46,22 @@ export class UserService {
             data
         });
     }
+        async updateusersettings(userId : number ,  data : Prisma.UserSettingUpdateInput){
+            const finduser = await this.getUserById(userId);
+            if(!finduser){
+                throw new HttpException('User not found', 404);
+            }
+            if(!finduser.usersetting){
+                throw new HttpException('User setting not found', 404);
+            }
+            return this.prisma.userSetting.update({
+                where: { userId },
+                data
+            })
+        }
+    
+
+
 
 }   
+

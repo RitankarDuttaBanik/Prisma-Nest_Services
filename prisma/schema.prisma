@@ -20,11 +20,15 @@ model User {
   email   String @unique
   displayname  String? @default("")
   posts Post[]
+  usersetting UserSetting?
 }
 
 model UserSetting {
   id       Int     @id @default(autoincrement())
   notifications Boolean
+  smsenabled  Boolean
+  userId Int  @unique
+  user User @relation(fields: [userId], references: [id])
 
 }
 
