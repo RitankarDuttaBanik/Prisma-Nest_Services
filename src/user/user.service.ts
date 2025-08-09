@@ -15,7 +15,7 @@ export class UserService {
     }
 
     getUserById(id : number){
-        return this.prisma.user.findUnique({where : {id} , include : {usersetting : true}});
+        return this.prisma.user.findUnique({where : {id} , include : {usersetting : true, posts : true}});
     }
 
     async deleteUser(id : number){
